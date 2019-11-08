@@ -9,6 +9,7 @@ import com.google.android.material.tabs.TabLayout;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +29,12 @@ public class MainActivity extends AppCompatActivity {
         tabs.setupWithViewPager(viewPager);
         FloatingActionButton fab = findViewById(R.id.fab);
 
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int height = displayMetrics.heightPixels;
+        int width = displayMetrics.widthPixels;
+        viewPager.addOnPageChangeListener(new UserMovesThePagesListener(fab, width));
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -35,5 +42,33 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+    }
+
+    private static class UserMovesThePagesListener implements ViewPager.OnPageChangeListener {
+
+        private View toBeMoved;
+        private int screenWidth;
+
+        public UserMovesThePagesListener(View toBeMoved, int screenWidth) {
+            this.toBeMoved = toBeMoved;
+            this.screenWidth = screenWidth;
+        }
+
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            float moveFactor = position + positionOffset;
+            float newXPosition = (moveFactor * screenWidth) / 2; //TODO 2 represents pager with 3 pages (n pages -> n-1)
+            toBeMoved.setX(newXPosition);
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+
+        }
     }
 }
