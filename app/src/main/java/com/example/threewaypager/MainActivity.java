@@ -1,20 +1,17 @@
 package com.example.threewaypager;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewTreeObserver;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
+
+import com.example.threewaypager.ui.main.SectionsPagerAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
-
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.util.DisplayMetrics;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-
-import com.example.threewaypager.ui.main.SectionsPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,38 +24,34 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
-        FloatingActionButton fab = findViewById(R.id.fab);
+        final FloatingActionButton fab = findViewById(R.id.fab);
 
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int height = displayMetrics.heightPixels;
-        int width = displayMetrics.widthPixels;
-        viewPager.addOnPageChangeListener(new UserMovesThePagesListener(fab, width));
-
-        fab.setOnClickListener(new View.OnClickListener() {
+        final View toBeMoved = findViewById(R.id.the_slice);
+        toBeMoved.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onGlobalLayout() {
+                toBeMoved.setPivotX(0);
+                toBeMoved.setPivotY(toBeMoved.getHeight());
             }
         });
+
+        viewPager.addOnPageChangeListener(new UserMovesThePagesListener(findViewById(R.id.the_slice)));
     }
 
     private static class UserMovesThePagesListener implements ViewPager.OnPageChangeListener {
 
         private View toBeMoved;
-        private int screenWidth;
 
-        public UserMovesThePagesListener(View toBeMoved, int screenWidth) {
+        public UserMovesThePagesListener(View toBeMoved) {
             this.toBeMoved = toBeMoved;
-            this.screenWidth = screenWidth;
         }
 
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             float moveFactor = position + positionOffset;
-            float newXPosition = (moveFactor * screenWidth) / 2; //TODO 2 represents pager with 3 pages (n pages -> n-1)
-            toBeMoved.setX(newXPosition);
+            float newValue = -90f + (moveFactor * 90) / 2; //TODO 2 represents pager with 3 pages (n pages -> n-1)
+            Log.d("degrees", "new " + newValue);
+            toBeMoved.setRotation(newValue);
         }
 
         @Override
