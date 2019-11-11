@@ -7,9 +7,14 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+
+import androidx.annotation.DrawableRes;
+
+import com.example.threewaypager.R;
 
 public class RingWithKnob extends View {
 
@@ -19,6 +24,14 @@ public class RingWithKnob extends View {
     Path knobPath = new Path();
     private float newDegrees;
     Point ringCenter = new Point();
+    Icon leftIcon;
+    Icon centerIcon;
+    Icon rightIcon;
+    double iconCenterX;
+    double iconCenterY;
+    int maxAlpha = 255;
+    int minAlpha = 100;
+    private static final float iconAngle = 70; //angle at which right icon is placed, where 0 degrees is vertical line
 
     public RingWithKnob(Context context) {
         super(context);
@@ -70,6 +83,13 @@ public class RingWithKnob extends View {
             knobPaint.setAntiAlias(true);
             knobPath = calculateRingSection(70, outer_radius, inner_radius, ringCenter);
         }
+
+        //  I C O N S
+        {
+            leftIcon = new Icon(R.drawable.ic_dollar, 160, outer_radius, inner_radius);
+            centerIcon = new Icon(R.drawable.ic_euro, 90, outer_radius, inner_radius);
+            rightIcon = new Icon(R.drawable.ic_yen, 20, outer_radius, inner_radius);
+        }
     }
 
     @Override
@@ -81,10 +101,23 @@ public class RingWithKnob extends View {
         Log.d("onDraw", "newDegrees " + newDegrees);
         canvas.drawPath(knobPath, knobPaint);
         canvas.restore();
+
+        leftIcon.applyNewMove(newDegrees);
+        leftIcon.iconDrawable.draw(canvas);
+
+        centerIcon.applyNewMove(newDegrees);
+        centerIcon.iconDrawable.draw(canvas);
+
+        rightIcon.applyNewMove(newDegrees);
+        rightIcon.iconDrawable.draw(canvas);
     }
 
-    public void rotateIt(float degrees) {
-        newDegrees = degrees;
+    public void rotateKnob(float moveFactor) {
+        float from = -iconAngle;
+        float to = iconAngle;
+        float newValue = from + (moveFactor * (to - from)) / 2; //TODO 2 represents pager with 3 pages (n pages -> n-1)
+        Log.d("degrees", "new " + newValue);
+        newDegrees = newValue;
         invalidate();
     }
 
@@ -104,5 +137,58 @@ public class RingWithKnob extends View {
         returnPath.lineTo(center.x - a1, center.y - b1);
 
         return returnPath;
+    }
+
+    private int calculateNewAlpha(float targetAngle, float currentAngle){
+        int proportionalRange = 20;
+        float diff = targetAngle - currentAngle;
+        float lowerLimit = targetAngle - proportionalRange;
+        float upperLimit = targetAngle + proportionalRange;
+        Log.d("calculateNewAlpha", "diff " + diff);
+        if(currentAngle > lowerLimit && currentAngle < targetAngle){
+            float xxx = minAlpha + ((currentAngle - (targetAngle - proportionalRange))*(maxAlpha-minAlpha))/proportionalRange;
+            Log.d("calculateNewAlpha", "proportionalRange lower" + xxx);
+            return (int)xxx;
+        }
+        else if(currentAngle >= targetAngle && currentAngle < upperLimit ){
+            float xxx = minAlpha + ((currentAngle - (targetAngle + proportionalRange))*(maxAlpha-minAlpha))/-proportionalRange;
+            Log.d("calculateNewAlpha", "proportionalRange upper" + xxx);
+            return (int)xxx;
+        }
+        else {
+            Log.d("calculateNewAlpha", "min");
+            return minAlpha;
+        }
+    }
+
+    private class Icon {
+        private Drawable iconDrawable;
+        private final float iconAngle;
+        private static final float angleTranslation = 90;
+
+        Icon(@DrawableRes int id, float iconAngle, float outer_radius, float inner_radius) {
+            this.iconAngle = iconAngle;
+            int ringWidth = (int)(outer_radius - inner_radius);
+            int halfSize = ringWidth/2;
+            float iconSize = .7f*halfSize;
+            float calipersRadius = inner_radius + halfSize;
+            iconCenterX = ringCenter.x + calipersRadius*Math.cos(Math.toRadians(iconAngle));
+            iconCenterY = ringCenter.y - calipersRadius*Math.sin(Math.toRadians(iconAngle));
+            iconDrawable = getResources().getDrawable(id, null);
+            iconDrawable.setTint(Color.WHITE);
+            iconDrawable.setBounds((int)(iconCenterX - iconSize), (int)(iconCenterY - iconSize), (int)(iconCenterX + iconSize), (int)(iconCenterY + iconSize));
+        }
+
+        private float translateIconAngle() {
+            float returnValue = -iconAngle + angleTranslation;
+            Log.d("translateIconAngle", "iconAngle " + iconAngle + " -> " + returnValue);
+            return returnValue;
+        }
+
+        void applyNewMove(float newDegrees) {
+            int newAlpha = calculateNewAlpha(translateIconAngle(), newDegrees);
+            Log.d("applyNewMove", "alpha " + newAlpha + " for icon on " + iconAngle);
+            iconDrawable.setAlpha(newAlpha);
+        }
     }
 }

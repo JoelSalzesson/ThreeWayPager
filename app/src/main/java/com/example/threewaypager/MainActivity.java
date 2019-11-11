@@ -1,7 +1,6 @@
 package com.example.threewaypager;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
@@ -36,11 +35,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             float moveFactor = position + positionOffset;
-            float from = -70;
-            float to = 70;
-            float newValue = from + (moveFactor * (to - from)) / 2; //TODO 2 represents pager with 3 pages (n pages -> n-1)
-            Log.d("degrees", "new " + newValue);
-            toBeMoved.rotateIt(newValue);
+            toBeMoved.rotateKnob(moveFactor);
 
         }
 
