@@ -1,5 +1,6 @@
 package com.example.threewaypager.ui.main;
 
+import android.animation.ArgbEvaluator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -30,8 +31,9 @@ public class RingWithKnob extends View {
     double iconCenterX;
     double iconCenterY;
     int maxAlpha = 255;
-    int minAlpha = 100;
+    int minAlpha = 0;
     private static final float iconAngle = 70; //angle at which right icon is placed, where 0 degrees is vertical line
+    ArgbEvaluator colorEvaluator = new ArgbEvaluator();
 
     public RingWithKnob(Context context) {
         super(context);
@@ -69,7 +71,7 @@ public class RingWithKnob extends View {
             ringPaint.setStrokeWidth(knobStroke);
             ringPaint.setAntiAlias(true);
             ringPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-            ringPaint.setColor(Color.RED);
+            ringPaint.setColor(Color.parseColor("#EEEDEF"));
             ringPath = calculateRingSection(180, outer_radius, inner_radius, ringCenter);
         }
 
@@ -81,6 +83,7 @@ public class RingWithKnob extends View {
             knobPaint.setStrokeJoin(Paint.Join.ROUND);    // set the join to round you want
             knobPaint.setStrokeCap(Paint.Cap.ROUND);      // set the paint cap to round too
             knobPaint.setAntiAlias(true);
+            knobPaint.setColor(Color.parseColor("#7A4AD1"));
             knobPath = calculateRingSection(70, outer_radius, inner_radius, ringCenter);
         }
 
@@ -188,7 +191,10 @@ public class RingWithKnob extends View {
         void applyNewMove(float newDegrees) {
             int newAlpha = calculateNewAlpha(translateIconAngle(), newDegrees);
             Log.d("applyNewMove", "alpha " + newAlpha + " for icon on " + iconAngle);
-            iconDrawable.setAlpha(newAlpha);
+//            iconDrawable.setAlpha(newAlpha);
+            Integer newColor = (Integer) colorEvaluator.evaluate((float)newAlpha/maxAlpha, Color.parseColor("#BEBCD2"), Color.WHITE);
+            Log.d("applyNewMove", "newAlpha/maxAlpha " + (float)newAlpha/maxAlpha + " newColor " + newColor);
+            iconDrawable.setTint(newColor);
         }
     }
 }
