@@ -2,7 +2,6 @@ package com.example.threewaypager.ui.main;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.util.AttributeSet;
@@ -11,12 +10,15 @@ import android.view.View;
 
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.threewaypager.R;
+
 public class GummyDot extends View implements ViewPager.OnPageChangeListener {
 
     private static final String TAG = GummyDot.class.getSimpleName();
     private int position;
     private float positionOffset;
-    private Paint dotPaint = new Paint();
+    private Paint backgroundDotPaint = new Paint();
+    private Paint movingDotPaint = new Paint();
     private float baseDotRadius;
     private float bigDotWidth;
     private static final float mid = .5f;
@@ -44,16 +46,20 @@ public class GummyDot extends View implements ViewPager.OnPageChangeListener {
         bigDotWidth = 2 * baseDotRadius;
 
         {
-            dotPaint.setAntiAlias(true);
-            dotPaint.setStrokeWidth(3);
-            dotPaint.setStyle(Paint.Style.STROKE);
-            dotPaint.setColor(Color.RED);
+            backgroundDotPaint.setStyle(Paint.Style.FILL);
+            backgroundDotPaint.setColor(getResources().getColor(R.color.grey));
+        }
+
+        {
+            movingDotPaint.setAntiAlias(true);
+            movingDotPaint.setStyle(Paint.Style.FILL);
+            movingDotPaint.setColor(getResources().getColor(R.color.purple));
         }
     }
 
-    private void addDot(Canvas canvas, Point center, float sizeX, float sizeY) {
+    private void addDot(Canvas canvas, Point center, float sizeX, float sizeY, Paint paint) {
         float _1_3_height = getHeight() / 3f;
-        canvas.drawRoundRect(center.x - sizeX, center.y - sizeY, center.x + sizeX, center.y + sizeY, _1_3_height, _1_3_height, dotPaint);
+        canvas.drawRoundRect(center.x - sizeX, center.y - sizeY, center.x + sizeX, center.y + sizeY, _1_3_height, _1_3_height, paint);
     }
 
     @Override
@@ -62,16 +68,16 @@ public class GummyDot extends View implements ViewPager.OnPageChangeListener {
         Point dot1 = new Point(getWidth() / 6, getHeight() / 2);
         Point dot2 = new Point(3 * getWidth() / 6, getHeight() / 2);
         Point dot3 = new Point(5 * getWidth() / 6, getHeight() / 2);
-        addDot(canvas, dot1, baseDotRadius, getHeight() / 3f);
-        addDot(canvas, dot2, baseDotRadius, getHeight() / 3f);
-        addDot(canvas, dot3, baseDotRadius, getHeight() / 3f);
+        addDot(canvas, dot1, baseDotRadius, getHeight() / 3f, backgroundDotPaint);
+        addDot(canvas, dot2, baseDotRadius, getHeight() / 3f, backgroundDotPaint);
+        addDot(canvas, dot3, baseDotRadius, getHeight() / 3f, backgroundDotPaint);
 
         //  M O V I N G    D O T
         {
             Point movingDot = new Point(getWidth() / 6, getHeight() / 2);
             movingDot.x = (int) calculateNewPosX(position + positionOffset, dot1.x, dot3.x);
             float movingDotRadius = calculateNewSizeX(position, positionOffset);
-            addDot(canvas, movingDot, movingDotRadius, getHeight() / 3f);
+            addDot(canvas, movingDot, movingDotRadius, getHeight() / 3f, movingDotPaint);
         }
     }
 

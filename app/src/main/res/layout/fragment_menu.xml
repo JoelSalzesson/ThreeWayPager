@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,13 +9,47 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_gravity="center"
-        android:background="@drawable/ic_up_chevron"/>
+        android:background="@drawable/ic_up_chevron" />
 
     <!-- this is just to show sth nice -->
-    <ImageView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:layout_gravity="bottom"
-        android:src="@drawable/dummy_menu"/>
+        android:layout_gravity="bottom">
+
+        <ImageView
+            android:id="@+id/dummy_dollar1"
+            android:layout_width="@dimen/dummy_icon_size"
+            android:layout_height="@dimen/dummy_icon_size"
+            android:src="@drawable/ic_dollar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/dummy_dollar2"
+            app:layout_constraintTop_toTopOf="parent"
+            android:tint="@color/other_grey"/>
+
+        <ImageView
+            android:id="@+id/dummy_dollar2"
+            android:layout_width="@dimen/dummy_icon_size"
+            android:layout_height="@dimen/dummy_icon_size"
+            android:src="@drawable/ic_dollar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/dummy_dollar1"
+            app:layout_constraintRight_toLeftOf="@id/dummy_dollar3"
+            app:layout_constraintTop_toTopOf="parent"
+            android:tint="@color/other_grey"/>
+
+        <ImageView
+            android:id="@+id/dummy_dollar3"
+            android:layout_width="@dimen/dummy_icon_size"
+            android:layout_height="@dimen/dummy_icon_size"
+            android:src="@drawable/ic_dollar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/dummy_dollar2"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:tint="@color/purple"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

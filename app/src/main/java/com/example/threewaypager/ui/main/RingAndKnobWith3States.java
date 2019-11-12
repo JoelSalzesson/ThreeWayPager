@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.DrawableRes;
-import androidx.viewpager.widget.ViewPager;
 
 import com.example.threewaypager.R;
 
@@ -89,7 +88,7 @@ public final class RingAndKnobWith3States extends View {
         ringPaint.setStrokeWidth(knobStroke);
         ringPaint.setAntiAlias(true);
         ringPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-        ringPaint.setColor(Color.parseColor("#EEEDEF")); //TODO could be taken from style or color resources
+        ringPaint.setColor(getResources().getColor(R.color.grey));
         ringPath = calculateRingSection(180, outerRadius, innerRadius, ringCenter); //180 means half a circle of course
     }
 
@@ -108,7 +107,7 @@ public final class RingAndKnobWith3States extends View {
         knobPaint.setStrokeJoin(Paint.Join.ROUND);
         knobPaint.setStrokeCap(Paint.Cap.ROUND);
         knobPaint.setAntiAlias(true);
-        knobPaint.setColor(Color.parseColor("#7A4AD1")); //TODO could be taken from style or color resources
+        knobPaint.setColor(getResources().getColor(R.color.purple));
         knobPath = calculateRingSection(70, outerRadius, innerRadius, ringCenter);
     }
 
@@ -172,6 +171,7 @@ public final class RingAndKnobWith3States extends View {
     }
 
     private class Icon {
+        private final static int SELECTED_COLOR = Color.WHITE;
         private Drawable iconDrawable;
         private final float iconAngle; //in degrees; where on the ring this icon will be placed; kind of polar coordinate of the icon
         private static final float angleTranslation = 90; //in degrees; needed to translate how angle is passed from outside (it comes as value used to rotate canvas)
@@ -190,7 +190,7 @@ public final class RingAndKnobWith3States extends View {
             double iconCenterX = ringCenter.x + calipersRadius * Math.cos(Math.toRadians(iconAngle));
             double iconCenterY = ringCenter.y - calipersRadius * Math.sin(Math.toRadians(iconAngle));
             iconDrawable = getResources().getDrawable(id, null);
-            iconDrawable.setTint(Color.WHITE); //TODO could be taken from style or color resources
+            iconDrawable.setTint(SELECTED_COLOR);
             iconDrawable.setBounds((int) (iconCenterX - iconSize), (int) (iconCenterY - iconSize), (int) (iconCenterX + iconSize), (int) (iconCenterY + iconSize));
         }
 
@@ -223,7 +223,7 @@ public final class RingAndKnobWith3States extends View {
         void applyNewMove(float newDegrees) {
             float fraction = calculateFractionForIconColorChange(translateIconAngle(), newDegrees);
             Log.d("applyNewMove", "fraction " + fraction + " for icon on " + iconAngle);
-            Integer newColor = (Integer) colorEvaluator.evaluate(fraction, Color.parseColor("#BEBCD2"), Color.WHITE); //TODO could be taken from style or color resources
+            Integer newColor = (Integer) colorEvaluator.evaluate(fraction, getResources().getColor(R.color.other_grey), SELECTED_COLOR);
             iconDrawable.setTint(newColor);
         }
     }
