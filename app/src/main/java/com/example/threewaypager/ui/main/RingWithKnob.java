@@ -18,6 +18,9 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.threewaypager.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class RingWithKnob extends View implements ViewPager.OnPageChangeListener {
 
     Path ringPath = new Path();
@@ -25,10 +28,8 @@ public final class RingWithKnob extends View implements ViewPager.OnPageChangeLi
     Paint knobPaint = new Paint();
     Path knobPath = new Path();
     private float newDegrees;
-    Point ringCenter = new Point();
-    Icon leftIcon;
-    Icon centerIcon;
-    Icon rightIcon;
+    private final Point ringCenter = new Point();
+    private List<Icon> icons = new ArrayList<>(3);
     int maxAlpha = 255;
     int minAlpha = 0;
     private static final float iconAngle = 70; //angle at which right icon is placed, where 0 degrees is vertical line
@@ -88,15 +89,17 @@ public final class RingWithKnob extends View implements ViewPager.OnPageChangeLi
     }
 
     private void initIcons(float outerRadius, float innerRadius){
-        leftIcon = new Icon(R.drawable.ic_dollar, 160, outerRadius, innerRadius);
-        centerIcon = new Icon(R.drawable.ic_euro, 90, outerRadius, innerRadius);
-        rightIcon = new Icon(R.drawable.ic_yen, 20, outerRadius, innerRadius);
+        Icon leftIcon = new Icon(R.drawable.ic_dollar, 160, outerRadius, innerRadius);
+        Icon centerIcon = new Icon(R.drawable.ic_euro, 90, outerRadius, innerRadius);
+        Icon rightIcon = new Icon(R.drawable.ic_yen, 20, outerRadius, innerRadius);
+        icons.add(leftIcon);
+        icons.add(centerIcon);
+        icons.add(rightIcon);
     }
 
     private void initKnob(float outerRadius, float innerRadius){
         knobPaint.setStrokeWidth(knobStroke);
         knobPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-//        knobPaint.setDither(true);
         knobPaint.setStrokeJoin(Paint.Join.ROUND);
         knobPaint.setStrokeCap(Paint.Cap.ROUND);
         knobPaint.setAntiAlias(true);
@@ -107,27 +110,26 @@ public final class RingWithKnob extends View implements ViewPager.OnPageChangeLi
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        //draw ring backgound
         canvas.drawPath(ringPath, ringPaint);
         canvas.save();
+
+        //rotate and draw foreground knob
         canvas.rotate(newDegrees, ringCenter.x, ringCenter.y);
         Log.d("onDraw", "newDegrees " + newDegrees);
         canvas.drawPath(knobPath, knobPaint);
         canvas.restore();
 
-        leftIcon.applyNewMove(newDegrees);
-        leftIcon.iconDrawable.draw(canvas);
-
-        centerIcon.applyNewMove(newDegrees);
-        centerIcon.iconDrawable.draw(canvas);
-
-        rightIcon.applyNewMove(newDegrees);
-        rightIcon.iconDrawable.draw(canvas);
+        //and draw all icons
+        for (Icon icon : icons){
+            icon.applyNewMove(newDegrees);
+            icon.iconDrawable.draw(canvas);
+        }
     }
 
     /**
-     * calculates part of ring based on angle
      * @param gapeAngle how wide the ring part will be in degrees; e.g. 180 will give half of circle
-     * @return calculated ring path to be drawn
+     * @return calculates closed path for part of ring based on angle, its outer and inner radius and center point
      */
     private Path calculateRingSection(float gapeAngle, float outer_radius, float inner_radius, Point center) {
         double halfAngleRadians = Math.toRadians(gapeAngle / 2);
@@ -137,12 +139,12 @@ public final class RingWithKnob extends View implements ViewPager.OnPageChangeLi
         float posY1 = (float) (inner_radius * Math.cos(halfAngleRadians));
         float posY2 = (float) (outer_radius * Math.cos(halfAngleRadians));
 
-        RectF outer_rect = new RectF(center.x - outer_radius, center.y - outer_radius, center.x + outer_radius, center.y + outer_radius);
-        RectF inner_rect = new RectF(center.x - inner_radius, center.y - inner_radius, center.x + inner_radius, center.y + inner_radius);
+        RectF outerRect = new RectF(center.x - outer_radius, center.y - outer_radius, center.x + outer_radius, center.y + outer_radius);
+        RectF innerRect = new RectF(center.x - inner_radius, center.y - inner_radius, center.x + inner_radius, center.y + inner_radius);
         Path returnPath = new Path();
-        returnPath.addArc(inner_rect, 270 - gapeAngle / 2, gapeAngle); //270 comes from how "addArc" interprets given angle
+        returnPath.addArc(innerRect, 270 - gapeAngle / 2, gapeAngle); //270 comes from how "addArc" interprets given angle
         returnPath.lineTo(center.x + posX2, center.y - posY2);
-        returnPath.addArc(outer_rect, 270 + gapeAngle / 2, -gapeAngle); //270 comes from how "addArc" interprets given angle
+        returnPath.addArc(outerRect, 270 + gapeAngle / 2, -gapeAngle); //270 comes from how "addArc" interprets given angle
         returnPath.lineTo(center.x - posX1, center.y - posY1);
 
         return returnPath;
