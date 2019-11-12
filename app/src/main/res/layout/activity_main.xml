@@ -42,7 +42,7 @@
         android:layout_gravity="center"/>
 
     <com.example.threewaypager.ui.main.RingWithKnob
-        android:id="@+id/the_ring"
+        android:id="@+id/ring_with_knob"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_width="match_parent"

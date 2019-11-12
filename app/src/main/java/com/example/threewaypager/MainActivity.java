@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
-        viewPager.addOnPageChangeListener((RingWithKnob) findViewById(R.id.the_ring));
+        viewPager.addOnPageChangeListener((RingWithKnob) findViewById(R.id.ring_with_knob));
         viewPager.addOnPageChangeListener((GummyDot) findViewById(R.id.gummy_dot));
     }
 }
