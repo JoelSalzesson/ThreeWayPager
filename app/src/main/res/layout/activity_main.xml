@@ -5,14 +5,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".RingKnobActivity">
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/ring_with_knob"/>
+        app:layout_constraintBottom_toTopOf="@id/bottom_thing_container"/>
 
     <com.example.threewaypager.ui.main.GummyDot
         android:id="@+id/gummy_dot"
@@ -24,13 +24,10 @@
         android:layout_marginTop="@dimen/dots_top_margin"
         android:layout_gravity="center" />
 
-    <com.example.threewaypager.ui.main.RingAndKnobWith3States
-        android:id="@+id/ring_with_knob"
+    <FrameLayout
+        android:id="@+id/bottom_thing_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_gravity="bottom"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="H,2:1" />
 

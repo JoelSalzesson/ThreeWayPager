@@ -21,7 +21,7 @@ import com.example.threewaypager.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class RingAndKnobWith3States extends View implements ViewPager.OnPageChangeListener {
+public final class RingAndKnobWith3States extends View {
 
     Path ringPath = new Path();
     Paint ringPaint = new Paint();
@@ -48,10 +48,15 @@ public final class RingAndKnobWith3States extends View implements ViewPager.OnPa
         super(context, attrs, defStyleAttr);
     }
 
+    private void startOffScreen(){
+//        setTranslationY(getHeight());
+    }
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         init();
+//        startOffScreen();
     }
 
     /*
@@ -155,13 +160,7 @@ public final class RingAndKnobWith3States extends View implements ViewPager.OnPa
     knob will be rotated based on that angle
     icons color will react on that angle
      */
-    @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        //expected "moveFactor" values when 3 pages are in viewpager:
-        //0 means left page is selected ... 1 center ... "maxFromViewPager" right is selected
-        //so range [0...maxFromViewPager]
-        float moveFactor = position + positionOffset;
-
+    public void onNewMove(float moveFactor) {
         float from = -theAngle;
         float to = theAngle;
 
@@ -170,16 +169,6 @@ public final class RingAndKnobWith3States extends View implements ViewPager.OnPa
         Log.d("degrees", "new " + newValue);
         newDegrees = newValue;
         invalidate();
-    }
-
-    @Override
-    public void onPageSelected(int position) {
-        //nothing
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int state) {
-        //nothing
     }
 
     private class Icon {

@@ -18,22 +18,22 @@
         android:id="@+id/section_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@id/guideline_above_dots"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:textSize="20sp"
-        tools:text="asdasdsasdasdsasdasds"
-        app:layout_constraintBottom_toTopOf="@id/guideline_above_dots"/>
+        tools:text="asdasdsasdasdsasdasds" />
 
     <TextView
         android:id="@+id/section_content"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dots_height"
+        android:text="We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android. We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android. We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android. We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android. We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android. We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android.We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android. We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android. End."
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:text="We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android. We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android. We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android. We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android. We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android. We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android.We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android. We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android. We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android. We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android. We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android. We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android.We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android. We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android. We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android. We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android. We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android. We all know that ConstraintLayout is a huge improvement in the way we develop UI on Android."
-        app:layout_constraintTop_toBottomOf="@id/section_label"
-        android:layout_marginTop="@dimen/dots_height"/>
-
+        app:layout_constraintTop_toBottomOf="@id/section_label" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
