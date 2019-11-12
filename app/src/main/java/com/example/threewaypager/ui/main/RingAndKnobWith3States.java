@@ -21,7 +21,7 @@ import com.example.threewaypager.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class RingWithKnob extends View implements ViewPager.OnPageChangeListener {
+public final class RingAndKnobWith3States extends View implements ViewPager.OnPageChangeListener {
 
     Path ringPath = new Path();
     Paint ringPaint = new Paint();
@@ -29,22 +29,23 @@ public final class RingWithKnob extends View implements ViewPager.OnPageChangeLi
     Path knobPath = new Path();
     private float newDegrees;
     private final Point ringCenter = new Point();
-    private List<Icon> icons = new ArrayList<>(3);
+    private int numberOfStates = 3; //only 3 states of the knob are expected to work: left, center, right; other numbers not tested
+    private List<Icon> icons = new ArrayList<>(numberOfStates);
     int maxAlpha = 255;
     int minAlpha = 0;
-    private static final float iconAngle = 70; //angle at which right icon is placed, where 0 degrees is vertical line
+    private static final float theAngle = 70; //angle at which right icon is placed, where 0 degrees is vertical line
     private static final ArgbEvaluator colorEvaluator = new ArgbEvaluator();
     private final static float knobStroke = 50; //nice round edges of the knob depends on this
 
-    public RingWithKnob(Context context) {
+    public RingAndKnobWith3States(Context context) {
         super(context);
     }
 
-    public RingWithKnob(Context context, AttributeSet attrs) {
+    public RingAndKnobWith3States(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public RingWithKnob(Context context, AttributeSet attrs, int defStyleAttr) {
+    public RingAndKnobWith3States(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
@@ -170,12 +171,23 @@ public final class RingWithKnob extends View implements ViewPager.OnPageChangeLi
         }
     }
 
+    /*
+    translate viewpager scroll state into angle
+    knob will be rotated based on that angle
+    icons color will react on that angle
+     */
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        //expected "moveFactor" values when 3 pages are in viewpager:
+        //0 means left page is selected ... 1 center ... 2 right is selected
+        //so range [0...2]
         float moveFactor = position + positionOffset;
-        float from = -iconAngle;
-        float to = iconAngle;
-        float newValue = from + (moveFactor * (to - from)) / 2; //TODO 2 represents pager with 3 pages (n pages -> n-1)
+
+        float from = -theAngle;
+        float to = theAngle;
+
+        //values from moveFactor should be translated to angle range [from...to]
+        float newValue = from + (moveFactor * (to - from)) / (numberOfStates - 1); //(numberOfStates - 1) represents pager with 3 pages (n pages -> n-1)
         Log.d("degrees", "new " + newValue);
         newDegrees = newValue;
         invalidate();
@@ -211,7 +223,7 @@ public final class RingWithKnob extends View implements ViewPager.OnPageChangeLi
 
         private float translateIconAngle() {
             float returnValue = -iconAngle + angleTranslation;
-            Log.d("translateIconAngle", "iconAngle " + iconAngle + " -> " + returnValue);
+            Log.d("translateIconAngle", "theAngle " + iconAngle + " -> " + returnValue);
             return returnValue;
         }
 
