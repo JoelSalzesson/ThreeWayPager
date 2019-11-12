@@ -39,14 +39,22 @@
         android:id="@+id/gummy_dot"
         android:layout_width="200dp"
         android:layout_height="50dp"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center" />
 
-    <com.example.threewaypager.ui.main.RingWithKnob
-        android:id="@+id/ring_with_knob"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:layout_gravity="bottom"/>
+        android:layout_height="match_parent">
+
+        <com.example.threewaypager.ui.main.RingWithKnob
+            android:id="@+id/ring_with_knob"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="bottom"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="H,2:1"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
