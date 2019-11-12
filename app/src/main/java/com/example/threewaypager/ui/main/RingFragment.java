@@ -16,16 +16,6 @@ import com.example.threewaypager.RingKnobActivity;
 
 public class RingFragment extends Fragment implements ViewPager.OnPageChangeListener {
 
-    public static RingFragment newInstance() {
-        RingFragment fragment = new RingFragment();
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_ring, container, false);
@@ -41,15 +31,10 @@ public class RingFragment extends Fragment implements ViewPager.OnPageChangeList
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        //get currently selected page from VP -> thanks to that after use hides ringknob and scrolls VP to other page and then shows ringknob again -> we know where we are and we set that value to the ringknob
         int idx = ((RingKnobActivity) getActivity()).getCurrentItemIdx();
         Log.d("onViewCreated", "idx " + idx);
         applyNewMove(idx);
-
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
     }
 
     @Override
@@ -70,11 +55,11 @@ public class RingFragment extends Fragment implements ViewPager.OnPageChangeList
 
     @Override
     public void onPageSelected(int position) {
-
+        //nothing
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
-
+        //nothing
     }
 }

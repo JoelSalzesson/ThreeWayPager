@@ -24,17 +24,21 @@ public class RingKnobActivity extends AppCompatActivity {
         ViewPager viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(sectionsPagerAdapter);
 
-        menuFragment = MenuFragment.newInstance();
-        ringFragment = RingFragment.newInstance();
-
+        menuFragment = new MenuFragment();
+        ringFragment = new RingFragment();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.bottom_thing_container, menuFragment , "menuFragment");
+        fragmentTransaction.replace(R.id.bottom_thing_container, menuFragment , "menuFragment"); //start activity with "menu"
         fragmentTransaction.commit();
 
         viewPager.addOnPageChangeListener((GummyDot) findViewById(R.id.gummy_dot));
         viewPager.addOnPageChangeListener(ringFragment);
     }
 
+    /*
+    clicks on chevrons is either fragment causes transition
+    check which fragment is currently visible by findFragmentByTag
+    and replace it with the other
+     */
     public void doTransition() {
         if(getSupportFragmentManager().findFragmentByTag("menuFragment") != null){
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();

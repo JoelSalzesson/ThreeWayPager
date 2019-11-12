@@ -1,4 +1,13 @@
-<vector android:height="404dp" android:viewportHeight="404.258"
-    android:viewportWidth="404.258" android:width="404dp" xmlns:android="http://schemas.android.com/apk/res/android">
-    <path android:fillColor="#FF000000" android:pathData="M202.129,114.331l-202.129,151.596l18,24l184.129,-138.096l184.129,138.096l18,-24z"/>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="404dp"
+    android:height="404dp"
+    android:viewportWidth="404.258"
+    android:viewportHeight="404.258">
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M202.129,114.331l-202.129,151.596l18,24l184.129,-138.096l184.129,138.096l18,-24z" />
 </vector>
+
+<!-- icon taken from https://www.flaticon.com/free-icon/up-chevron_120887
+<div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+-->

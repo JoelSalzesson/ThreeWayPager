@@ -11,4 +11,11 @@
         android:layout_gravity="center"
         android:background="@drawable/ic_up_chevron"/>
 
+    <!-- this is just to show sth nice -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_gravity="bottom"
+        android:src="@drawable/dummy_menu"/>
+
 </FrameLayout>

@@ -11,19 +11,7 @@ import androidx.fragment.app.Fragment;
 import com.example.threewaypager.R;
 import com.example.threewaypager.RingKnobActivity;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class MenuFragment extends Fragment {
-
-    public static MenuFragment newInstance() {
-        return new MenuFragment();
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public View onCreateView(
