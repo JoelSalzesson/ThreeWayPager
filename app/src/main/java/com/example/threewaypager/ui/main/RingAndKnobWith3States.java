@@ -30,9 +30,8 @@ public final class RingAndKnobWith3States extends View implements ViewPager.OnPa
     private float newDegrees;
     private final Point ringCenter = new Point();
     private int numberOfStates = 3; //only 3 states of the knob are expected to work: left, center, right; other numbers not tested
+    private final int maxFromViewPager = numberOfStates - 1; //to interpret what viewpager gives us as position it's moved we need to know the max value it will send us; that value equals number of pages VP has minus 1; so 3 pages -> we get 2
     private List<Icon> icons = new ArrayList<>(numberOfStates);
-    int maxAlpha = 255;
-    int minAlpha = 0;
     private static final float theAngle = 70; //angle at which right icon is placed, where 0 degrees is vertical line
     private static final ArgbEvaluator colorEvaluator = new ArgbEvaluator();
     private final static float knobStroke = 50; //nice round edges of the knob depends on this
@@ -111,7 +110,7 @@ public final class RingAndKnobWith3States extends View implements ViewPager.OnPa
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        //draw ring backgound
+        //draw ring background
         canvas.drawPath(ringPath, ringPaint);
         canvas.save();
 
@@ -151,26 +150,6 @@ public final class RingAndKnobWith3States extends View implements ViewPager.OnPa
         return returnPath;
     }
 
-    private int calculateNewAlpha(float targetAngle, float currentAngle) {
-        int proportionalRange = 20;
-        float diff = targetAngle - currentAngle;
-        float lowerLimit = targetAngle - proportionalRange;
-        float upperLimit = targetAngle + proportionalRange;
-        Log.d("calculateNewAlpha", "diff " + diff);
-        if (currentAngle > lowerLimit && currentAngle < targetAngle) {
-            float xxx = minAlpha + ((currentAngle - (targetAngle - proportionalRange)) * (maxAlpha - minAlpha)) / proportionalRange;
-            Log.d("calculateNewAlpha", "proportionalRange lower" + xxx);
-            return (int) xxx;
-        } else if (currentAngle >= targetAngle && currentAngle < upperLimit) {
-            float xxx = minAlpha + ((currentAngle - (targetAngle + proportionalRange)) * (maxAlpha - minAlpha)) / -proportionalRange;
-            Log.d("calculateNewAlpha", "proportionalRange upper" + xxx);
-            return (int) xxx;
-        } else {
-            Log.d("calculateNewAlpha", "min");
-            return minAlpha;
-        }
-    }
-
     /*
     translate viewpager scroll state into angle
     knob will be rotated based on that angle
@@ -179,15 +158,15 @@ public final class RingAndKnobWith3States extends View implements ViewPager.OnPa
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         //expected "moveFactor" values when 3 pages are in viewpager:
-        //0 means left page is selected ... 1 center ... 2 right is selected
-        //so range [0...2]
+        //0 means left page is selected ... 1 center ... "maxFromViewPager" right is selected
+        //so range [0...maxFromViewPager]
         float moveFactor = position + positionOffset;
 
         float from = -theAngle;
         float to = theAngle;
 
         //values from moveFactor should be translated to angle range [from...to]
-        float newValue = from + (moveFactor * (to - from)) / (numberOfStates - 1); //(numberOfStates - 1) represents pager with 3 pages (n pages -> n-1)
+        float newValue = from + (moveFactor * (to - from)) / maxFromViewPager;
         Log.d("degrees", "new " + newValue);
         newDegrees = newValue;
         invalidate();
@@ -207,17 +186,22 @@ public final class RingAndKnobWith3States extends View implements ViewPager.OnPa
         private Drawable iconDrawable;
         private final float iconAngle; //in degrees; where on the ring this icon will be placed; kind of polar coordinate of the icon
         private static final float angleTranslation = 90; //in degrees; needed to translate how angle is passed from outside (it comes as value used to rotate canvas)
+        //magic values for nice calculation of new icon color based on angle:
+        private static final int justSomeMax = 100;
+        private static final int justTheMin = 0;
+        private static final int proportionalRange = 20; //in degrees where color will fade down; outside of this range [iconAngle - proportionalRange ... iconAngle + proportionalRange] the color will just stay the same
 
         Icon(@DrawableRes int id, float iconAngle, float outer_radius, float inner_radius) {
-            this.iconAngle = iconAngle;
-            int ringWidth = (int) (outer_radius - inner_radius);
-            int halfSize = ringWidth / 2;
-            float iconSize = .7f * halfSize;
-            float calipersRadius = inner_radius + halfSize;
+            this.iconAngle = iconAngle; //polar coordinates -> angle
+            int ringWidth = (int) (outer_radius - inner_radius); //we need this to roughly estimate where icon center should be placed and how big it should be
+            int halfSize = ringWidth / 2; //take half -> used
+            float iconSize = .7f * halfSize; //scale it down to 70% not to be drawn outside of arc
+            float calipersRadius = inner_radius + halfSize; //polar coordinates -> radius
+            //calculate icon center respective to ring center using polar coordinates
             double iconCenterX = ringCenter.x + calipersRadius * Math.cos(Math.toRadians(iconAngle));
             double iconCenterY = ringCenter.y - calipersRadius * Math.sin(Math.toRadians(iconAngle));
             iconDrawable = getResources().getDrawable(id, null);
-            iconDrawable.setTint(Color.WHITE);
+            iconDrawable.setTint(Color.WHITE); //TODO could be taken from style or color resources
             iconDrawable.setBounds((int) (iconCenterX - iconSize), (int) (iconCenterY - iconSize), (int) (iconCenterX + iconSize), (int) (iconCenterY + iconSize));
         }
 
@@ -227,11 +211,30 @@ public final class RingAndKnobWith3States extends View implements ViewPager.OnPa
             return returnValue;
         }
 
+        /*
+        returns fraction [0...1] to be later used in colorEvaluator to move from one color to another
+         */
+        private float calculateFractionForIconColorChange(float targetAngle, float currentAngle) {
+            float newValue;
+            float lowerLimit = targetAngle - proportionalRange;
+            float upperLimit = targetAngle + proportionalRange;
+
+            if (currentAngle > lowerLimit && currentAngle < upperLimit) {
+                float howFarFromTarget = Math.abs(targetAngle - currentAngle);
+                Log.d("calculateFraction"+iconAngle, "howFarFromTarget " + howFarFromTarget);
+                newValue = justTheMin + ((targetAngle - howFarFromTarget - lowerLimit) * (justSomeMax - justTheMin)) / (targetAngle - lowerLimit);
+            } else {
+                Log.d("calculateFraction"+iconAngle, "justTheMin");
+                newValue = justTheMin;
+            }
+            Log.d("calculateFraction"+iconAngle, "newValue " + newValue);
+            return newValue / justSomeMax;
+        }
+
         void applyNewMove(float newDegrees) {
-            int newAlpha = calculateNewAlpha(translateIconAngle(), newDegrees);
-            Log.d("applyNewMove", "alpha " + newAlpha + " for icon on " + iconAngle);
-            Integer newColor = (Integer) colorEvaluator.evaluate((float) newAlpha / maxAlpha, Color.parseColor("#BEBCD2"), Color.WHITE);
-            Log.d("applyNewMove", "newAlpha/maxAlpha " + (float) newAlpha / maxAlpha + " newColor " + newColor);
+            float fraction = calculateFractionForIconColorChange(translateIconAngle(), newDegrees);
+            Log.d("applyNewMove", "fraction " + fraction + " for icon on " + iconAngle);
+            Integer newColor = (Integer) colorEvaluator.evaluate(fraction, Color.parseColor("#BEBCD2"), Color.WHITE); //TODO could be taken from style or color resources
             iconDrawable.setTint(newColor);
         }
     }
