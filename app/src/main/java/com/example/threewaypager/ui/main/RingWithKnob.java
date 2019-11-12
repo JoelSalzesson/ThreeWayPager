@@ -14,10 +14,11 @@ import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.DrawableRes;
+import androidx.viewpager.widget.ViewPager;
 
 import com.example.threewaypager.R;
 
-public class RingWithKnob extends View {
+public class RingWithKnob extends View implements ViewPager.OnPageChangeListener {
 
     Path ringPath = new Path();
     Paint ringPaint = new Paint();
@@ -115,15 +116,6 @@ public class RingWithKnob extends View {
         rightIcon.iconDrawable.draw(canvas);
     }
 
-    public void rotateKnob(float moveFactor) {
-        float from = -iconAngle;
-        float to = iconAngle;
-        float newValue = from + (moveFactor * (to - from)) / 2; //TODO 2 represents pager with 3 pages (n pages -> n-1)
-        Log.d("degrees", "new " + newValue);
-        newDegrees = newValue;
-        invalidate();
-    }
-
     private Path calculateRingSection(float gapeAngle, float outer_radius, float inner_radius, Point center) {
         double halfAngleRadians = Math.toRadians(gapeAngle / 2);
         float a1 = (float) (inner_radius * Math.sin(halfAngleRadians));
@@ -162,6 +154,27 @@ public class RingWithKnob extends View {
             Log.d("calculateNewAlpha", "min");
             return minAlpha;
         }
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        float moveFactor = position + positionOffset;
+        float from = -iconAngle;
+        float to = iconAngle;
+        float newValue = from + (moveFactor * (to - from)) / 2; //TODO 2 represents pager with 3 pages (n pages -> n-1)
+        Log.d("degrees", "new " + newValue);
+        newDegrees = newValue;
+        invalidate();
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        //nothing
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+        //nothing
     }
 
     private class Icon {
