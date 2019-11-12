@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.threewaypager.ui.main.GummyDot;
 import com.example.threewaypager.ui.main.RingWithKnob;
 import com.example.threewaypager.ui.main.SectionsPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
@@ -20,33 +21,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
-        viewPager.addOnPageChangeListener(new UserMovesThePagesListener((RingWithKnob) findViewById(R.id.the_ring)));
-
-    }
-
-    private static class UserMovesThePagesListener implements ViewPager.OnPageChangeListener {
-
-        private RingWithKnob toBeMoved;
-
-        public UserMovesThePagesListener(RingWithKnob toBeMoved) {
-            this.toBeMoved = toBeMoved;
-        }
-
-        @Override
-        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            float moveFactor = position + positionOffset;
-            toBeMoved.rotateKnob(moveFactor);
-
-        }
-
-        @Override
-        public void onPageSelected(int position) {
-
-        }
-
-        @Override
-        public void onPageScrollStateChanged(int state) {
-
-        }
+        viewPager.addOnPageChangeListener((RingWithKnob) findViewById(R.id.the_ring));
+        viewPager.addOnPageChangeListener((GummyDot) findViewById(R.id.gummy_dot));
     }
 }
